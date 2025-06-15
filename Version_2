@@ -1,0 +1,113 @@
+
+
+from easygui import*
+shopping_cart = {}
+item_list = {'banana':2.50,
+             'apple':0.50,
+             'grape':2.00,
+             'milk':5.00,
+             }
+total_price = {}
+button_list = ['Yes','No']
+
+#using def funtion for different part of the program
+
+def add():#using def funtion to add items to the dictionary
+    print('Items List')
+    for items,price in item_list.items():#using for loop to print the items and price one after the other
+        print(f'{items} - ${price}')
+    while True:
+        try:
+            add_item = enterbox('Enter the item you want to add from the item list (enter finish to stop): ')
+            if add_item == 'finish':#letting user to add how many ever things they want  
+                break
+            elif add_item.isalpha():#making sure user only eneter letters not numbers
+                if add_item in item_list:
+                    item_q = int(enterbox(f'How many {add_item} do you want?: '))#asking user to enter quantity of item
+                    try:#traping error
+                        if item_q == '':
+                            msgbox("This field can't be empty")
+                        else:
+                            shopping_cart[add_item] = item_q #storing the item and its quantitiy into a dictionary
+                    except ValueError:
+                        msgbox('invaild input, please enter number only')
+                else:
+                    msgbox("Sorry, we don't have the item you looking for")
+            else:
+                msgbox('invaild input, please enter only letters')#asking user to enter again after a error 
+        except ValueError:
+            msgbox('Field can not be empty')#friendly reminder to tell the user what to do 
+        
+
+def remove():#def funtion to remove items from the dictionary
+    while True:#loop over and over again until user say to stop
+        remove_item = enterbox('Enter the item you want to remove from cart (enter finish to stop): ')
+        if remove_item == 'finish':
+            break
+        elif remove_item.isalpha():#making user to enter only letters
+            if remove_item in shopping_cart:#checking if the item is in the dictionary
+                shopping_cart.pop(remove_item)#removing item from the dictionary
+            else:
+                msgbox('The item is not find in cart')
+        else:
+            msgbox('invaild input, please enter only letters')
+#using funtion for the user to be able to view what is in their cart
+def view():
+    for items,quantity in shopping_cart.items():#for loop to print each item and their quantity on by one
+        msgbox(f'- {items} x{quantity}')
+
+def check_price():# Use zip and a dictionary constructor to create the product dictionary
+    total = dict(zip(shopping_cart, (shopping_cart[key] * item_list[key] for key in shopping_cart)))
+    for item,price in total.items():
+        msgbox(f'{item} = ${price}')
+    total_price = sum(total.values())
+    msgbox(f'The total price is: ${total_price}')
+
+def check_out():
+    while True:
+        #calculating the subtotal and total of items
+        total = dict(zip(shopping_cart, (shopping_cart[key] * item_list[key] for key in shopping_cart)))
+        total_price = sum(total.values())
+        text = f'Total : ${total_price}, How would you like to pay:'
+        title = 'Check Out'
+        #button box for user to choose payment way
+        payment_ways = ['Credit card','Debit card','Visa card','PayPal','AfterPay','Exit']
+        payment = buttonbox(text,title,payment_ways)
+        if payment == 'Exit':
+            user_input = buttonbox('Are sure you want to stop?','Check out',button_list)
+            if user_input == 'Yes':
+                break
+            else:
+                continue
+        else:
+            msgbox('Payment Success, Thank You for coming')
+            break
+    
+def main():
+    #letting user to choose option
+    while True:
+        text = 'Please choose an option '
+        title = 'Shopping'
+        option_list = ['Add','Remove','View','Check price','Check out','Exit']
+        option = buttonbox(text,title,option_list)
+        if option == 'Add':
+            add()
+        elif option == 'View':
+            view()
+        elif option == 'Remove':
+            remove()
+        elif option == 'Check price':
+            check_price()
+        elif option == 'Check out':
+            check_out()
+            user_input = buttonbox('Do you want to shop more?','Shop',button_list)
+            if user_input == 'Yes':
+                continue
+            else:
+                msgbox('Thank You for using the program, Goodbye ')
+                break
+        elif option == 'Exit':
+            msgbox('Thank you for using the program, Goodbye')
+            break
+main()
+    
